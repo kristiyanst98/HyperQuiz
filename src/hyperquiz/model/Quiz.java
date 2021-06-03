@@ -16,6 +16,7 @@ public class Quiz extends AbstractEntity<Long,Quiz> {
     private String tags;
 
     public Quiz() {
+        this.questions=new ArrayList<>();
     }
 
     public Quiz(String title, User author, String description, int expectedDuration, String tags) {

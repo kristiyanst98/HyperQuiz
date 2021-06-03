@@ -17,15 +17,15 @@ public class Player extends User {
         for(QuizResult result:results){
             this.overallScore+=result.getScore();
         }
+        return overallScore;
+    }
+
+    public Rank getRank() {
         if(overallScore<50){
             setRank(Rank.Bad);
         }else{
             setRank(Rank.Good);
         }
-        return overallScore;
-    }
-
-    public Rank getRank() {
         return rank;
     }
 

@@ -11,6 +11,7 @@ public class Question {
     private List<Answer> answers;
 
     public Question() {
+        this.answers=new ArrayList<>();
     }
 
     public Question(Quiz quiz, String text) {

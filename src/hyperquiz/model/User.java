@@ -127,21 +127,7 @@ public class User extends AbstractEntity<Long,User> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("id=").append(getId());
-        sb.append(", created=").append(getCreated());
-        sb.append(", modified=").append(getModified());
-        sb.append(", username='").append(username).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append(", gender=").append(gender);
-        sb.append(", role=").append(role);
-        sb.append(", userPicture=").append(userPicture);
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", metadata='").append(metadata).append('\'');
-        sb.append(", status=").append(status);
-        sb.append(", quizzes=").append(quizzes);
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder(this.username);
         return sb.toString();
     }
 }
