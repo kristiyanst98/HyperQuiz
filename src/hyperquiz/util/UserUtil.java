@@ -58,12 +58,8 @@ public class UserUtil {
         do {
             System.out.println("Enter a gender: M / F");
             String gender = scanner.nextLine();
-            if (ValidationUtil.validateGender(user, gender)) {
-                break;
-            }else{
-                System.out.println("Enter a valid gender");
-            }
-        }while(true);
+            user.setGender(ValidationUtil.validateGender(gender));
+        } while (user.getGender() == null);
         do{
             System.out.println("Enter a user description:");
             String desc = scanner.nextLine();
