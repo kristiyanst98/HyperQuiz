@@ -1,8 +1,10 @@
 package hyperquiz;
 
 import hyperquiz.dao.QuizRepository;
+import hyperquiz.dao.UserRepository;
 import hyperquiz.dao.impl.LongKeyGenerator;
 import hyperquiz.dao.impl.QuizRepositoryImpl;
+import hyperquiz.dao.impl.UserRepositoryMemoryImpl;
 import hyperquiz.exceptions.EntityAlreadyExistsException;
 import hyperquiz.model.Quiz;
 import hyperquiz.model.User;
@@ -33,28 +35,9 @@ public class Main {
 //        quiz2.setTitle("Medium");
 
         QuizRepository quizRepository = new QuizRepositoryImpl(new LongKeyGenerator());
-
-//        Quiz[] quizz ={quiz,quiz2};
-
-
-        List<PrintUtil.ColumnDescriptor> metadataColumns = List.of(
-                new PrintUtil.ColumnDescriptor("created", "Created", 10, Alignment.CENTER),
-                new PrintUtil.ColumnDescriptor("updated", "Updated", 10, Alignment.CENTER)
-        );
-
-        List<PrintUtil.ColumnDescriptor> quizColumns = new ArrayList<>(List.of(
-                new PrintUtil.ColumnDescriptor("id", "ID", 5, Alignment.CENTER),
-                new PrintUtil.ColumnDescriptor("title", "Title", 8, Alignment.LEFT),
-                new PrintUtil.ColumnDescriptor("author", "Author", 14, Alignment.LEFT),
-                new PrintUtil.ColumnDescriptor("description", "Description", 20, Alignment.LEFT),
-                new PrintUtil.ColumnDescriptor("expectedDuration", "Duration", 8, Alignment.RIGHT, 2),
-                new PrintUtil.ColumnDescriptor("URL", "Picture URL", 11, Alignment.CENTER)
-        ));
-
-        quizColumns.addAll(metadataColumns);
-
+        UserRepository userRepository = new UserRepositoryMemoryImpl(new LongKeyGenerator());
 //        String quizReport = PrintUtil.formatTable(quizColumns, Arrays.asList(quizz), "Quiz List:");
 //        System.out.println(quizReport);
-        MenuUtil.printMenu(quizRepository);
+        MenuUtil.printMenu(quizRepository,userRepository);
     }
 }

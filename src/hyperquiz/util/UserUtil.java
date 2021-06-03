@@ -1,6 +1,7 @@
 package hyperquiz.util;
 
 import hyperquiz.dao.UserRepository;
+import hyperquiz.exceptions.InvalidGenderException;
 import hyperquiz.model.Gender;
 import hyperquiz.model.Quiz;
 import hyperquiz.model.Role;
@@ -21,7 +22,7 @@ public class UserUtil {
     private String metadata;
     private boolean status;
     private List<Quiz> quizzes;
-    public static User createUser(){
+    public static User createUser() {
         Scanner scanner = new Scanner(System.in);
         User user = new User();
         System.out.println("=NOW CREATING A NEW USER=");
@@ -58,7 +59,11 @@ public class UserUtil {
         do {
             System.out.println("Enter a gender: M / F");
             String gender = scanner.nextLine();
-            user.setGender(ValidationUtil.validateGender(gender));
+            try {
+                user.setGender(ValidationUtil.validateGender(gender));
+            } catch (InvalidGenderException e) {
+                System.out.println(e.getMessage());
+            }
         } while (user.getGender() == null);
         do{
             System.out.println("Enter a user description:");
