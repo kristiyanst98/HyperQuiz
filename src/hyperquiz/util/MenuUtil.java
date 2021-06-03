@@ -24,7 +24,7 @@ public class MenuUtil {
                     qr.create(QuizUtil.createQuiz());
                     break;
                 case 2:
-//                    UserUtil.createUser();
+                    UserUtil.createUser();
                     break;
                 case 3:
 

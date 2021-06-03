@@ -15,6 +15,13 @@ public class ValidationUtil {
         }
     }
 
+    public static boolean validateNumber(int number){
+        if(number>=0){
+            return true;
+        }else{
+            return false;
+        }
+    }
     public static boolean validateNumber(int number, int min, int max) {
         int cnt = 1;
         int tmp = number;
@@ -38,6 +45,31 @@ public class ValidationUtil {
             user.setGender(Gender.FEMALE);
             return true;
         } else{
+            return false;
+        }
+    }
+    public static boolean validateEmail(String s){
+        if(s.contains("@") && s.contains(".")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static boolean validateStatus(User user,String s){
+        String upper = s.toUpperCase(Locale.ROOT);
+        if(upper.equals("Y")||upper.equals("YES")){
+            user.setStatus(true);
+            return true;
+        }else if(upper.equals("N")||upper.equals("NO")){
+            user.setStatus(false);
+            return true;
+        }
+        return false;
+    }
+    public static boolean validateTags(String s){
+        if(s.contains("#")){
+            return true;
+        }else{
             return false;
         }
     }
