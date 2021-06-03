@@ -1,5 +1,6 @@
 package hyperquiz.dao.impl;
 
+import hyperquiz.dao.KeyGenerator;
 import hyperquiz.dao.QuizRepository;
 import hyperquiz.model.Quiz;
 
@@ -37,5 +38,9 @@ public class QuizRepositoryImpl extends RepositoryMemoryImpl<Long, Quiz> impleme
               return false;
            }
        }).collect(Collectors.toSet());
+    }
+
+    public QuizRepositoryImpl(KeyGenerator<Long> keyGenerator) {
+        super(keyGenerator);
     }
 }

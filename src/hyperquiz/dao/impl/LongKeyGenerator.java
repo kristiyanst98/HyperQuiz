@@ -12,4 +12,7 @@ public class LongKeyGenerator  implements KeyGenerator<Long> {
     public Long getNextId() {
         return sequence.incrementAndGet();
     }
+
+    public LongKeyGenerator() {
+    }
 }
