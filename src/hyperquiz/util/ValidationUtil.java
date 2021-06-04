@@ -5,23 +5,18 @@ import hyperquiz.model.Gender;
 import hyperquiz.model.User;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ValidationUtil {
 
     public static boolean validateString(String string, int min, int max) {
-        if (string.trim().length() >= min && string.trim().length() <= max) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return (string.trim().length() >= min && string.trim().length() <= max);
     }
 
     public static boolean validateNumber(int number) {
-        if (number >= 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return number>=0;
     }
 
     public static boolean validateNumber(int number, int min, int max) {
@@ -52,11 +47,10 @@ public class ValidationUtil {
     }
 
     public static boolean validateEmail(String s) {
-        if (s.contains("@") && s.contains(".")) {
-            return true;
-        } else {
-            return false;
-        }
+        String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(s);
+        return matcher.matches();
     }
 
     public static boolean validateStatus(User user, String s) {
@@ -72,10 +66,6 @@ public class ValidationUtil {
     }
 
     public static boolean validateTags(String s) {
-        if (s.contains("#")) {
-            return true;
-        } else {
-            return false;
-        }
+        return s.contains("#");
     }
 }
