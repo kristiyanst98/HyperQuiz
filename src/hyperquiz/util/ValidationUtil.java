@@ -53,6 +53,14 @@ public class ValidationUtil {
         return matcher.matches();
     }
 
+
+
+    public static boolean validatePassword(String s) {
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(s);
+        return matcher.matches();
+    }
     public static boolean validateStatus(User user, String s) {
         String upper = s.toUpperCase(Locale.ROOT);
         if (upper.equals("Y") || upper.equals("YES")) {

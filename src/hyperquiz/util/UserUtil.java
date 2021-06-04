@@ -49,7 +49,7 @@ public class UserUtil {
         do {
             System.out.println("Enter password:");
             String pw = scanner.nextLine();
-            if (ValidationUtil.validateString(pw, 8, 15)) {
+            if (ValidationUtil.validatePassword(pw)) {
                 user.setPassword(pw);
                 break;
             }else{
