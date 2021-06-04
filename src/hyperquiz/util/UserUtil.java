@@ -22,7 +22,7 @@ public class UserUtil {
     private String metadata;
     private boolean status;
     private List<Quiz> quizzes;
-    public static User createUser() {
+    public static User createUser(UserRepository ur) {
         Scanner scanner = new Scanner(System.in);
         User user = new User();
         System.out.println("=NOW CREATING A NEW USER=");
@@ -30,8 +30,12 @@ public class UserUtil {
             System.out.println("Enter username:");
             String username = scanner.nextLine();
             if(ValidationUtil.validateString(username,2,15)) {
-                user.setUsername(username);
-                break;
+                if(ValidationUtil.validateUser(username,ur)) {
+                    user.setUsername(username);
+                    break;
+                }else{
+                    System.out.println("User with username: "+ username+" already exists");
+                }
             }else{
                 System.out.println("Username must contain from 2 to 15 characters");
             }
@@ -53,7 +57,7 @@ public class UserUtil {
                 user.setPassword(pw);
                 break;
             }else{
-                System.out.println("Enter a password between 8 and 15 characters");
+                System.out.println("The password must have minimum 8 characters, 1 capital letter, 1 special symbol");
             }
         }while(true);
         do {

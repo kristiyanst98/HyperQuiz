@@ -1,5 +1,6 @@
 package hyperquiz.util;
 
+import hyperquiz.dao.UserRepository;
 import hyperquiz.exceptions.InvalidGenderException;
 import hyperquiz.model.Gender;
 import hyperquiz.model.User;
@@ -76,4 +77,9 @@ public class ValidationUtil {
     public static boolean validateTags(String s) {
         return s.contains("#");
     }
+
+    public static boolean validateUser(String username, UserRepository ur){
+        return ur.findByUsername(username).isEmpty();
+    }
+
 }

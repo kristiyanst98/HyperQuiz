@@ -12,12 +12,15 @@ import hyperquiz.util.Alignment;
 import hyperquiz.util.MenuUtil;
 import hyperquiz.util.PrintUtil;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws EntityAlreadyExistsException {
+    public static void main(String[] args) throws EntityAlreadyExistsException, IOException, ClassNotFoundException {
 //        Quiz quiz = new Quiz();
 //        Quiz quiz2 = new Quiz();
 //        User user = new User();
@@ -39,5 +42,6 @@ public class Main {
 //        String quizReport = PrintUtil.formatTable(quizColumns, Arrays.asList(quizz), "Quiz List:");
 //        System.out.println(quizReport);
         MenuUtil.printMenu(quizRepository,userRepository);
+
     }
 }

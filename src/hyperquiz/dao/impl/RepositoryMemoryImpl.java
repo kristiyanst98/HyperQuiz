@@ -7,6 +7,10 @@ import hyperquiz.exceptions.EntityDataInvalidException;
 import hyperquiz.model.Identifiable;
 
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +40,24 @@ public class RepositoryMemoryImpl<K, V extends Identifiable<K>> implements Repos
 
     @Override
     public V create(V entity) throws EntityAlreadyExistsException {
-        if (keyGenerator != null) {
-            if (entity.getId() == null) {
-                entity.setId(keyGenerator.getNextId());
-            } else {
-                if (entities.get(entity.getId()) != null) {
-                    throw new EntityAlreadyExistsException(
-                            String.format("Entity with ID='%s' already exists.", entity.getId()));
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("Entities.txt"))) {
+            if (keyGenerator != null) {
+                if (entity.getId() == null) {
+                    entity.setId(keyGenerator.getNextId());
+                } else {
+                    if (entities.get(entity.getId()) != null) {
+                        throw new EntityAlreadyExistsException(
+                                String.format("Entity with ID='%s' already exists.", entity.getId()));
+                    }
                 }
             }
+            out.writeObject(entity);
+            entities.put(entity.getId(), entity);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        entities.put(entity.getId(), entity);
         return entity;
     }
 

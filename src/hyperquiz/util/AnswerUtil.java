@@ -12,12 +12,26 @@ public class AnswerUtil {
         Scanner scanner = new Scanner(System.in);
         Answer answer = new Answer();
         answer.setQuestion(question);
-        System.out.println("Enter answer text:");
-        String text = scanner.nextLine();
-        answer.setText(text);
-        System.out.println("Enter score:");
-        int score = scanner.nextInt();
-        answer.setScore(score);
+        do {
+            System.out.println("Enter answer text:");
+            String text = scanner.nextLine();
+            if(ValidationUtil.validateString(text,2,100)) {
+                answer.setText(text);
+                break;
+            }else{
+                System.out.println("Answer text must be between 2 and 100 characters");
+            }
+        }while(true);
+        do {
+            System.out.println("Enter score:");
+            int score = scanner.nextInt();
+            if(ValidationUtil.validateNumber(score)) {
+                answer.setScore(score);
+            break;
+            }else{
+                System.out.println("Enter a positive number");
+            }
+        }while(true);
         return answer;
 
     }

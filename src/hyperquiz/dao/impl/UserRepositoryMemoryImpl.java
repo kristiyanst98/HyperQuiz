@@ -20,7 +20,6 @@ public class UserRepositoryMemoryImpl extends RepositoryMemoryImpl<Long, User>
     public Optional<User> findByUsername(String username) {
         return findAll().stream()
                 .filter(user -> user.getUsername().equals(username))
-                .peek(u -> System.out.println("Filtered value: " + u))
                 .findFirst();
     }
 }

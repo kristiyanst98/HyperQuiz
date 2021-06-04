@@ -4,14 +4,19 @@ import hyperquiz.dao.QuizRepository;
 import hyperquiz.dao.UserRepository;
 import hyperquiz.exceptions.EntityAlreadyExistsException;
 import hyperquiz.exceptions.InvalidGenderException;
+import hyperquiz.model.User;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class MenuUtil {
-    public static void printMenu(QuizRepository qr, UserRepository ur) throws EntityAlreadyExistsException {
+    public static void printMenu(QuizRepository qr, UserRepository ur) throws EntityAlreadyExistsException, IOException, ClassNotFoundException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("Select an option:\n" +
@@ -29,7 +34,7 @@ public class MenuUtil {
                     qr.create(QuizUtil.createQuiz());
                     break;
                 case 2:
-                    ur.create(UserUtil.createUser());
+                    ur.create(UserUtil.createUser(ur));
                     break;
                 case 3:
                     printQuizzes(qr);
@@ -63,7 +68,7 @@ public class MenuUtil {
         System.out.println(quizReport);
     }
 
-    private static void printUsers(UserRepository ur) {
+    private static void printUsers(UserRepository ur) throws IOException{
         List<PrintUtil.ColumnDescriptor> metadataColumns = List.of(
                 new PrintUtil.ColumnDescriptor("created", "Created", 10, Alignment.CENTER),
                 new PrintUtil.ColumnDescriptor("updated", "Updated", 10, Alignment.CENTER)
@@ -76,9 +81,23 @@ public class MenuUtil {
                 new PrintUtil.ColumnDescriptor("description", "Description", 20, Alignment.LEFT),
                 new PrintUtil.ColumnDescriptor("status", "Status", 5, Alignment.RIGHT, 2)
         ));
+        List<User> users = new ArrayList<>();
+        while(true) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("Entities.txt"))) {
+                Object obj = in.readObject();
+                if(obj!=null && obj.getClass()==User.class){
+                    users.add((User) obj);
+                }else{
+                    break;
+                }
+            } catch (Exception e) {
 
-        userColumns.addAll(metadataColumns);
-        String userReport = PrintUtil.formatTable(userColumns, ur.findAll(), "Quiz List:");
-        System.out.println(userReport);
-    }
+            }
+        }
+
+            userColumns.addAll(metadataColumns);
+            String userReport = PrintUtil.formatTable(userColumns, users, "Quiz List:");
+            System.out.println(userReport);
+        }
+
 }
