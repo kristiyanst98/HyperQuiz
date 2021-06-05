@@ -96,15 +96,7 @@ public class Quiz extends AbstractEntity<Long,Quiz> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Quiz{");
-        sb.append("title='").append(title).append('\'');
-        sb.append(", author=").append(author);
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", questions=").append(questions);
-        sb.append(", expectedDuration=").append(expectedDuration);
-        sb.append(", picture=").append(picture);
-        sb.append(", tags='").append(tags).append('\'');
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder(this.title);
         return sb.toString();
     }
 }

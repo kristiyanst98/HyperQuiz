@@ -5,6 +5,9 @@ import hyperquiz.exceptions.InvalidGenderException;
 import hyperquiz.model.Gender;
 import hyperquiz.model.User;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +20,7 @@ public class ValidationUtil {
     }
 
     public static boolean validateNumber(int number) {
-        return number>=0;
+        return number >= 0;
     }
 
     public static boolean validateNumber(int number, int min, int max) {
@@ -48,20 +51,22 @@ public class ValidationUtil {
     }
 
     public static boolean validateEmail(String s) {
-        String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(s);
-        return matcher.matches();
+//        String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
+//        Pattern pattern = Pattern.compile(regex);
+//        Matcher matcher = pattern.matcher(s);
+//        return matcher.matches();
+        return true;
     }
-
 
 
     public static boolean validatePassword(String s) {
-        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(s);
-        return matcher.matches();
+//        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+//        Pattern pattern = Pattern.compile(regex);
+//        Matcher matcher = pattern.matcher(s);
+//        return matcher.matches();
+        return true;
     }
+
     public static boolean validateStatus(User user, String s) {
         String upper = s.toUpperCase(Locale.ROOT);
         if (upper.equals("Y") || upper.equals("YES")) {
@@ -78,8 +83,20 @@ public class ValidationUtil {
         return s.contains("#");
     }
 
-    public static boolean validateUser(String username, UserRepository ur){
-        return ur.findByUsername(username).isEmpty();
+    public static boolean validateUser(String username) {
+        try (ObjectInputStream IN = new ObjectInputStream(new FileInputStream("Entities.data"))) {
+            Object object;
+            while ((object = IN.readObject()) != null) {
+                if (object instanceof User) {
+                    if (((User) object).getUsername().equals(username)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+        }
+        return false;
     }
+
 
 }

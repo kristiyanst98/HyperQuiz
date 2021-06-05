@@ -1,8 +1,9 @@
 package hyperquiz.model;
 
+import java.io.Serializable;
 import java.net.URL;
 
-public class Answer {
+public class Answer implements Serializable {
     private Question question;
     private String text;
     private URL picture;

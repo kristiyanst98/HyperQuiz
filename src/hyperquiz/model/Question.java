@@ -1,10 +1,11 @@
 package hyperquiz.model;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Question {
+public class Question implements Serializable {
     private Quiz quiz;
     private String text;
     private URL picture;

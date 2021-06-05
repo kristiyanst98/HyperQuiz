@@ -37,11 +37,12 @@ public class Main {
 //        quiz2.setId(2L);
 //        quiz2.setTitle("Medium");
 
-        QuizRepository quizRepository = new QuizRepositoryImpl(new LongKeyGenerator());
-        UserRepository userRepository = new UserRepositoryMemoryImpl(new LongKeyGenerator());
+//        QuizRepository quizRepository = new QuizRepositoryImpl(new LongKeyGenerator());
+//        UserRepository userRepository = new UserRepositoryMemoryImpl(new LongKeyGenerator());
 //        String quizReport = PrintUtil.formatTable(quizColumns, Arrays.asList(quizz), "Quiz List:");
 //        System.out.println(quizReport);
-        MenuUtil.printMenu(quizRepository,userRepository);
+
+        MenuUtil.printMenu();
 
     }
 }

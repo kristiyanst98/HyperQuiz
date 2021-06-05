@@ -26,6 +26,7 @@ public class QuestionUtil {
             }
         }while(true);
         question.getAnswers().add(AnswerUtil.createAnswer(question));
+
         return question;
     }
 }

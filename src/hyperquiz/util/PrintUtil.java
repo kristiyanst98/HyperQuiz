@@ -1,5 +1,8 @@
 package hyperquiz.util;
 
+import hyperquiz.model.Question;
+import hyperquiz.model.Quiz;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -50,31 +53,41 @@ public class PrintUtil {
 
         // print heading with labels
         sb.append(repeat("-", width)).append("\n| ");
-        for(ColumnDescriptor c : columns){
+        for (ColumnDescriptor c : columns) {
             appendStringAligned(sb, c.label, c.width, Alignment.CENTER);
             sb.append(" | ");
         }
         sb.append("\n").append(repeat("-", width)).append("\n");
         // print table data
-        for(Object item: items) {
+        for (Object item : items) {
             sb.append("| ");
-            for(ColumnDescriptor c : columns){
+            for (ColumnDescriptor c : columns) {
                 try {
                     Method accessor = item.getClass().getMethod(getAccessorMethodForProperty(c.property));
                     Object value = accessor.invoke(item); // invoke get method using reflection
-                    if(value instanceof Float || value instanceof Double){
+                    if (value instanceof Float || value instanceof Double) {
                         value = String.format("%" + c.width + "." + c.precision + "f", value);
-                    } else if(value instanceof Date){
+                    } else if (value instanceof Date) {
                         value = sdf.format(value);
                     }
                     appendStringAligned(sb, value.toString(), c.width, c.alignment);
-                } catch (NoSuchMethodException| IllegalAccessException | InvocationTargetException | NullPointerException  e) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NullPointerException e) {
 //                    e.printStackTrace();
                     appendStringAligned(sb, "-", c.width, Alignment.CENTER);
                 }
                 sb.append(" | ");
             }
             sb.append("\n");
+            int i = 1;
+            if (item instanceof Quiz) {
+                for (Question q : ((Quiz) item).getQuestions()) {
+                    sb.append("Question " + i + ": " + q.getText());
+                    sb.append("\n");
+                    i++;
+                }
+            }
+            sb.append(repeat("-", width)).append("\n");
+
         }
         sb.append(repeat("-", width)).append("\n");
 
