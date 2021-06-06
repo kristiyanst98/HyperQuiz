@@ -1,14 +1,14 @@
 package hyperquiz.model;
 
 public class QuizResult extends AbstractEntity<Long,QuizResult>{
-    private User player;
+    private Player player;
     private Quiz quiz;
     private int score;
 
     public QuizResult() {
     }
 
-    public QuizResult(User player, Quiz quiz, int score) {
+    public QuizResult(Player player, Quiz quiz, int score) {
         this.player = player;
         this.quiz = quiz;
         this.score = score;
@@ -18,7 +18,7 @@ public class QuizResult extends AbstractEntity<Long,QuizResult>{
         return player;
     }
 
-    public void setPlayer(User player) {
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
@@ -34,8 +34,8 @@ public class QuizResult extends AbstractEntity<Long,QuizResult>{
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void addScore(int score) {
+        this.score += score;
     }
 
     @Override

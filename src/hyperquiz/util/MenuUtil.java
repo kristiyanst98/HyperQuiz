@@ -3,8 +3,8 @@ package hyperquiz.util;
 import hyperquiz.dao.QuizRepository;
 import hyperquiz.dao.UserRepository;
 import hyperquiz.exceptions.EntityAlreadyExistsException;
-import hyperquiz.model.Quiz;
-import hyperquiz.model.User;
+import hyperquiz.exceptions.LoginFailException;
+import hyperquiz.model.*;
 
 import java.io.*;
 import java.util.*;
@@ -17,6 +17,7 @@ public class MenuUtil {
     public static final String PRINT_USER_OPTION = "<1> Print Users";
     public static final String PRINT_QUIZ_OPTION = "<2> Print Quizzes";
     public static final String CREATE_QUIZ_OPTION ="<3> Create Quiz";
+    public static final String PLAY_QUIZ_OPTION = "<4> Play Quiz";
     private static Map<Integer, String> options = new LinkedHashMap<>();
     private static ObjectInputStream IN;
     private static Map<Integer, String> loggedOpt = new LinkedHashMap<>();
@@ -28,8 +29,8 @@ public class MenuUtil {
         options.put(2, REGISTER_OPTION);
 
         Scanner scanner = new Scanner(System.in);
-
-        while (true) {
+        boolean flag=true;
+        while (flag) {
             System.out.println(SELECT_OPTION);
             for (Map.Entry<Integer, String> opt : options.entrySet()) {
                 System.out.println(opt.getValue());
@@ -41,8 +42,8 @@ public class MenuUtil {
                     return;
                 case 1:
                     login();
+                    flag=false;
                     break;
-
                 case 2:
                     StreamUtil.createUser(UserUtil.createUser());
                     break;
@@ -95,10 +96,34 @@ public class MenuUtil {
         String userReport = PrintUtil.formatTable(userColumns, readUsers(), "User List:");
         System.out.println(userReport);
     }
+    public static void printPlayers(Quiz quiz) {
+        List<User> allUsers=readUsers();
+        List<User> onlyForQuiz=new ArrayList<>();
+        for(User user:allUsers){
+            if(user.getQuizzes().contains(quiz)){
+                onlyForQuiz.add(user);
+            }
+        }
+        List<PrintUtil.ColumnDescriptor> metadataColumns = List.of(
+                new PrintUtil.ColumnDescriptor("created", "Created", 10, Alignment.CENTER),
+                new PrintUtil.ColumnDescriptor("updated", "Updated", 10, Alignment.CENTER)
+        );
+
+        List<PrintUtil.ColumnDescriptor> userColumns = new ArrayList<>(List.of(
+                new PrintUtil.ColumnDescriptor("username", "Username", 10, Alignment.CENTER),
+                new PrintUtil.ColumnDescriptor("email", "E-mail", 10, Alignment.LEFT),
+                new PrintUtil.ColumnDescriptor("gender", "Gender", 8, Alignment.LEFT),
+                new PrintUtil.ColumnDescriptor("overallScore", "Score", 20, Alignment.LEFT),
+                new PrintUtil.ColumnDescriptor("status", "Status", 5, Alignment.RIGHT, 2)
+        ));
+
+        userColumns.addAll(metadataColumns);
+        String userReport = PrintUtil.formatTable(userColumns, onlyForQuiz, "Player List:");
+        System.out.println(userReport);
+    }
 
     public static List<User> readUsers() {
         List<User> users = new ArrayList<>();
-
 
         Object obj;
         try {
@@ -109,7 +134,7 @@ public class MenuUtil {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Reached EOF");
+
         }
         return users;
     }
@@ -117,7 +142,6 @@ public class MenuUtil {
     public static List<Quiz> readQuizzes() {
         List<Quiz> quizzes = new ArrayList<>();
 
-//        try(ObjectInputStream in = new ObjectInputStream(new FileInputStream("Entities.data"))) {
         Object obj;
         try {
             IN=new ObjectInputStream(new FileInputStream("Entities.data"));
@@ -128,48 +152,50 @@ public class MenuUtil {
             }
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Reached EOF");
         }
 
         return quizzes;
     }
 
 
-    public static boolean login() {
-        List<User> users;
+    public static void login() {
+        List<User> users=readUsers();
         Scanner scanner = new Scanner(System.in);
-        users = readUsers();
-
-        while (true) {
+        boolean flag=true;
+        while (flag) {
             System.out.println("Enter username or 0 to quit:");
             String username = scanner.nextLine();
             if (username.equals("0")) {
                 break;
             } else {
-                for (User user : users) {
-                    if (user.getUsername().equals(username)) {
-                        System.out.println("Enter password:");
-                        String password = scanner.nextLine();
-                        if (password.equals(user.getPassword())) {
-                            System.out.println("Login successful!");
-                            printLoggedOpt();
-                            break;
-                        } else {
-                            System.out.println("Login failed.Wrong password");
-                            return false;
+                try {
+                    for (User user : users) {
+                        if (user.getUsername().equals(username)) {
+                            System.out.println("Enter password:");
+                            String password = scanner.nextLine();
+                            if (password.equals(user.getPassword())) {
+                                System.out.println("Login successful!");
+                                printLoggedOpt(user);
+                              flag=false;
+                            } else {
+                                throw new LoginFailException("Login failed");
+
+                            }
                         }
                     }
+                }catch (LoginFailException e){
+                    System.out.println(e.getMessage());
                 }
             }
         }
-        return false;
     }
 
-    public static void printLoggedOpt() {
+    public static void printLoggedOpt(User user) {
         loggedOpt.put(0, EXIT_OPTION);
         loggedOpt.put(1, PRINT_USER_OPTION);
         loggedOpt.put(2, PRINT_QUIZ_OPTION);
         loggedOpt.put(3,CREATE_QUIZ_OPTION);
+        loggedOpt.put(4,PLAY_QUIZ_OPTION);
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -191,13 +217,48 @@ public class MenuUtil {
                 case 3:
                     StreamUtil.createQuiz(QuizUtil.createQuiz());
                     break;
+                case 4:
+                    playQuiz(user);
+                    break;
                 default:
                     System.out.println("Invalid Option");
 
             }
         }
     }
-    public static void playQuiz(){
+    public static void playQuiz(User user) {
+        List<Quiz> quizzes = readQuizzes();
+        Scanner scanner = new Scanner(System.in);
+        Quiz pickedQuiz = new Quiz();
+        boolean flag = false;
+        QuizResult quizResult = new QuizResult();
+        System.out.println("Pick a quiz by its ID:");
+        for (Quiz quiz : quizzes) {
+            System.out.println(quiz.getId() + ". " + quiz.getTitle());
+        }
+        long num = scanner.nextInt();
+        scanner.nextLine();
+        for (Quiz quiz : quizzes) {
+            if (num == quiz.getId()) {
+                pickedQuiz = quiz;
+                quizResult.setQuiz(pickedQuiz);
+                flag = true;
+            }
+        }
+        while (flag) {
+            for (Question q : pickedQuiz.getQuestions()) {
+                System.out.println(q.getText());
+                String answer = scanner.nextLine();
+                for (Answer a : q.getAnswers()) {
+                    if (a.getText().equalsIgnoreCase(answer)) {
+                        quizResult.addScore(a.getScore());
+                        printPlayers(pickedQuiz);
+                    }
+                }
+            }
+            flag=false;
 
+        }
     }
+
 }

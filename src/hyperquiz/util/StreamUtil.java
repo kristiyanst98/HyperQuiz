@@ -1,8 +1,11 @@
 package hyperquiz.util;
 
+import hyperquiz.dao.KeyGenerator;
 import hyperquiz.dao.QuizRepository;
 import hyperquiz.dao.QuizResultRepository;
 import hyperquiz.dao.UserRepository;
+import hyperquiz.dao.impl.LongKeyGenerator;
+import hyperquiz.model.Player;
 import hyperquiz.model.Question;
 import hyperquiz.model.Quiz;
 import hyperquiz.model.User;
@@ -10,12 +13,14 @@ import hyperquiz.model.User;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StreamUtil {
 
     private static ObjectOutputStream OUT;
+    private static LongKeyGenerator keyGen=new LongKeyGenerator();
 
     static {
         try {
@@ -32,12 +37,27 @@ public class StreamUtil {
             }else{
                 OUT = new ObjectOutputStream(new FileOutputStream("Entities.data"));
             }
+
+
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
-
     }
+    public static LongKeyGenerator getKeyGen() {
+        if (Files.exists(Path.of("Entities.data"))) {
+            try (ObjectInputStream IN = new ObjectInputStream(new FileInputStream("Entities.data"))) {
+                Object obj;
+                while ((obj = IN.readObject()) != null) {
+                    if (obj instanceof LongKeyGenerator) {
+                        keyGen = (LongKeyGenerator) obj;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
 
+            }
+        }
+        return keyGen;
+    }
     public static void createUser(User user) {
         try {
             OUT.writeObject(user);

@@ -1,5 +1,6 @@
 package hyperquiz.util;
 
+import hyperquiz.dao.impl.LongKeyGenerator;
 import hyperquiz.model.Question;
 import hyperquiz.model.Quiz;
 import hyperquiz.model.User;
@@ -12,8 +13,8 @@ public class QuizUtil {
 
     public static Quiz createQuiz() {
         Scanner scanner = new Scanner(System.in);
-        Quiz quiz = new Quiz();
         System.out.println("----CREATING QUIZ----");
+        Quiz quiz = new Quiz(StreamUtil.getKeyGen().getNextId());
         do {
             System.out.println("Enter title:");
             String title = scanner.nextLine();

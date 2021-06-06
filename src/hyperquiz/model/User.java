@@ -14,9 +14,10 @@ public class User extends AbstractEntity<Long,User> {
     private String description;
     private String metadata;
     private boolean status;
-    private List<Quiz> quizzes;
+    private List<Quiz> quizzes=new ArrayList<>();
 
     public User() {
+        this.quizzes=new ArrayList<>();
     }
 
     public User(Long id) {
@@ -29,7 +30,6 @@ public class User extends AbstractEntity<Long,User> {
         this.password = password;
         this.gender = gender;
         this.status = status;
-        this.quizzes=new ArrayList<>();
     }
 
     public User(String username, String email, String password, Gender gender, Role role, URL userPicture, String description, String metadata, boolean status) {
@@ -42,7 +42,6 @@ public class User extends AbstractEntity<Long,User> {
         this.description = description;
         this.metadata = metadata;
         this.status = status;
-        this.quizzes=new ArrayList<>();
     }
 
     public String getUsername() {

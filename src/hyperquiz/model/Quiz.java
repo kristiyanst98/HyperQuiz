@@ -10,13 +10,17 @@ public class Quiz extends AbstractEntity<Long,Quiz> {
     private String title;
     private User author;
     private String description;
-    private List<Question> questions;
+    private List<Question> questions=new ArrayList<>();
     private int expectedDuration;
     private URL picture;
     private String tags;
 
     public Quiz() {
-        this.questions=new ArrayList<>();
+
+    }
+
+    public Quiz(Long id) {
+        super(id);
     }
 
     public Quiz(String title, User author, String description, int expectedDuration, String tags) {

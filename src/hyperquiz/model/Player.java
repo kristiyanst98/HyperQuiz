@@ -12,6 +12,10 @@ public class Player extends User {
         this.results = new ArrayList<>();
     }
 
+    public Player(String username, String email, String password, Gender gender, boolean status) {
+        super(username, email, password, gender, status);
+        this.results=new ArrayList<>();
+    }
 
     public int getOverallScore() {
         for(QuizResult result:results){
@@ -31,5 +35,9 @@ public class Player extends User {
 
     private void setRank(Rank rank) {
         this.rank = rank;
+    }
+
+    public List<QuizResult> getResults() {
+        return results;
     }
 }
