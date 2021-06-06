@@ -12,9 +12,9 @@ import java.util.Scanner;
 public class QuizUtil {
 
     public static Quiz createQuiz() {
+        Quiz quiz = new Quiz(StreamUtil.getKeyGen().getNextId());
         Scanner scanner = new Scanner(System.in);
         System.out.println("----CREATING QUIZ----");
-        Quiz quiz = new Quiz(StreamUtil.getKeyGen().getNextId());
         do {
             System.out.println("Enter title:");
             String title = scanner.nextLine();

@@ -2,10 +2,7 @@ package hyperquiz.util;
 
 import hyperquiz.dao.UserRepository;
 import hyperquiz.exceptions.InvalidGenderException;
-import hyperquiz.model.Gender;
-import hyperquiz.model.Quiz;
-import hyperquiz.model.Role;
-import hyperquiz.model.User;
+import hyperquiz.model.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +16,7 @@ public class UserUtil {
 
     public static User createUser() {
         Scanner scanner = new Scanner(System.in);
-        User user = new User();
+        User user = new Player();
         System.out.println("=NOW CREATING A NEW USER=");
             do {
                 System.out.println("Enter username:");

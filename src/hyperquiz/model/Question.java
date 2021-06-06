@@ -62,7 +62,7 @@ public class Question implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Question{");
+        StringBuilder sb = new StringBuilder("Question{");
         sb.append("quiz=").append(quiz);
         sb.append(", text='").append(text).append('\'');
         sb.append(", picture=").append(picture);

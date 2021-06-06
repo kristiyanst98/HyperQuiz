@@ -21,6 +21,7 @@ public class MenuUtil {
     private static Map<Integer, String> options = new LinkedHashMap<>();
     private static ObjectInputStream IN;
     private static Map<Integer, String> loggedOpt = new LinkedHashMap<>();
+    private static List<User> allUsers=readUsers();
 
 
     public static void printMenu() {
@@ -93,15 +94,16 @@ public class MenuUtil {
 
 
         userColumns.addAll(metadataColumns);
-        String userReport = PrintUtil.formatTable(userColumns, readUsers(), "User List:");
+        String userReport = PrintUtil.formatTable(userColumns, allUsers, "User List:");
         System.out.println(userReport);
     }
     public static void printPlayers(Quiz quiz) {
-        List<User> allUsers=readUsers();
-        List<User> onlyForQuiz=new ArrayList<>();
+        List<Player> onlyForQuiz=new ArrayList<>();
         for(User user:allUsers){
-            if(user.getQuizzes().contains(quiz)){
-                onlyForQuiz.add(user);
+            if(user.getRole()==Role.PLAYER){
+                if(user.getQuizzes().contains(quiz)){
+                    onlyForQuiz.add((Player)user);
+                }
             }
         }
         List<PrintUtil.ColumnDescriptor> metadataColumns = List.of(
@@ -113,8 +115,7 @@ public class MenuUtil {
                 new PrintUtil.ColumnDescriptor("username", "Username", 10, Alignment.CENTER),
                 new PrintUtil.ColumnDescriptor("email", "E-mail", 10, Alignment.LEFT),
                 new PrintUtil.ColumnDescriptor("gender", "Gender", 8, Alignment.LEFT),
-                new PrintUtil.ColumnDescriptor("overallScore", "Score", 20, Alignment.LEFT),
-                new PrintUtil.ColumnDescriptor("status", "Status", 5, Alignment.RIGHT, 2)
+                new PrintUtil.ColumnDescriptor("overallScore", "Score", 20, Alignment.LEFT)
         ));
 
         userColumns.addAll(metadataColumns);
@@ -124,7 +125,6 @@ public class MenuUtil {
 
     public static List<User> readUsers() {
         List<User> users = new ArrayList<>();
-
         Object obj;
         try {
             IN = new ObjectInputStream(new FileInputStream("Entities.data"));
@@ -159,7 +159,7 @@ public class MenuUtil {
 
 
     public static void login() {
-        List<User> users=readUsers();
+        allUsers=readUsers();
         Scanner scanner = new Scanner(System.in);
         boolean flag=true;
         while (flag) {
@@ -169,14 +169,14 @@ public class MenuUtil {
                 break;
             } else {
                 try {
-                    for (User user : users) {
+                    for (User user : allUsers) {
                         if (user.getUsername().equals(username)) {
                             System.out.println("Enter password:");
                             String password = scanner.nextLine();
                             if (password.equals(user.getPassword())) {
                                 System.out.println("Login successful!");
+                                flag=false;
                                 printLoggedOpt(user);
-                              flag=false;
                             } else {
                                 throw new LoginFailException("Login failed");
 
@@ -191,74 +191,80 @@ public class MenuUtil {
     }
 
     public static void printLoggedOpt(User user) {
-        loggedOpt.put(0, EXIT_OPTION);
-        loggedOpt.put(1, PRINT_USER_OPTION);
-        loggedOpt.put(2, PRINT_QUIZ_OPTION);
-        loggedOpt.put(3,CREATE_QUIZ_OPTION);
-        loggedOpt.put(4,PLAY_QUIZ_OPTION);
         Scanner scanner = new Scanner(System.in);
+        if (user.getRole() == Role.PLAYER) {
+            loggedOpt.put(0, EXIT_OPTION);
+            loggedOpt.put(1, PRINT_USER_OPTION);
+            loggedOpt.put(2, PRINT_QUIZ_OPTION);
+            loggedOpt.put(3, CREATE_QUIZ_OPTION);
+            loggedOpt.put(4, PLAY_QUIZ_OPTION);
+            while (true) {
+                System.out.println(SELECT_OPTION);
+                for (Map.Entry<Integer, String> opt : loggedOpt.entrySet()) {
+                    System.out.println(opt.getValue());
+                }
+                int num = scanner.nextInt();
+                switch (num) {
+                    case 0:
+                        System.out.println("Quitting...");
+                        return;
+                    case 1:
+                        printUsers();
+                        break;
+                    case 2:
+                        printQuizzes();
+                        break;
+                    case 3:
+                        StreamUtil.createQuiz(QuizUtil.createQuiz());
+                        break;
+                    case 4:
+                        playQuiz((Player) user);
+                        break;
+                    default:
+                        System.out.println("Invalid Option");
 
-        while (true) {
-            System.out.println(SELECT_OPTION);
-            for (Map.Entry<Integer, String> opt : loggedOpt.entrySet()) {
-                System.out.println(opt.getValue());
-            }
-            int num = scanner.nextInt();
-            switch (num) {
-                case 0:
-                    System.out.println("Quitting...");
-                    return;
-                case 1:
-                    printUsers();
-                    break;
-                case 2:
-                    printQuizzes();
-                    break;
-                case 3:
-                    StreamUtil.createQuiz(QuizUtil.createQuiz());
-                    break;
-                case 4:
-                    playQuiz(user);
-                    break;
-                default:
-                    System.out.println("Invalid Option");
-
+                }
             }
         }
     }
-    public static void playQuiz(User user) {
-        List<Quiz> quizzes = readQuizzes();
-        Scanner scanner = new Scanner(System.in);
-        Quiz pickedQuiz = new Quiz();
-        boolean flag = false;
-        QuizResult quizResult = new QuizResult();
-        System.out.println("Pick a quiz by its ID:");
-        for (Quiz quiz : quizzes) {
-            System.out.println(quiz.getId() + ". " + quiz.getTitle());
-        }
-        long num = scanner.nextInt();
-        scanner.nextLine();
-        for (Quiz quiz : quizzes) {
-            if (num == quiz.getId()) {
-                pickedQuiz = quiz;
-                quizResult.setQuiz(pickedQuiz);
-                flag = true;
+    public static void playQuiz(Player user) {
+            List<Quiz> quizzes = readQuizzes();
+            Scanner scanner = new Scanner(System.in);
+            Quiz pickedQuiz = new Quiz();
+            QuizResult quizResult=new QuizResult();
+            boolean flag = false;
+            System.out.println("Pick a quiz by its ID:");
+            for (Quiz quiz : quizzes) {
+                System.out.println(quiz.getId() + ". " + quiz.getTitle());
             }
-        }
-        while (flag) {
-            for (Question q : pickedQuiz.getQuestions()) {
-                System.out.println(q.getText());
-                String answer = scanner.nextLine();
-                for (Answer a : q.getAnswers()) {
-                    if (a.getText().equalsIgnoreCase(answer)) {
-                        quizResult.addScore(a.getScore());
-                        printPlayers(pickedQuiz);
-                    }
+            long num = scanner.nextInt();
+            scanner.nextLine();
+            for (Quiz quiz : quizzes) {
+                if (num == quiz.getId()) {
+                    pickedQuiz = quiz;
+                    quizResult.setQuiz(pickedQuiz);
+                    quizResult.setPlayer(user);
+                    flag = true;
                 }
             }
-            flag=false;
+            while (flag) {
+                for (Question q : pickedQuiz.getQuestions()) {
+                    System.out.println(q.getText());
+                    String answer = scanner.nextLine();
+                    for (Answer a : q.getAnswers()) {
+                        if (a.getText().equalsIgnoreCase(answer)) {
+                            quizResult.addScore(a.getScore());
+                        }
+                    }
+                }
 
+                flag = false;
         }
+        user.getQuizzes().add(pickedQuiz);
+        user.getResults().add(quizResult);
+        user.getOverallScore();
+        printPlayers(pickedQuiz);
+
     }
 
 }

@@ -34,7 +34,6 @@ class QuizRepositoryImplTest {
     public void setUp(){
         keyGenerator=new LongKeyGenerator();
         qr=new QuizRepositoryImpl(keyGenerator);
-
     }
 
     private void fillInQuizzes() {
